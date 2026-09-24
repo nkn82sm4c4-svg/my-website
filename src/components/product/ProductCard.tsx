@@ -16,16 +16,17 @@ export function ProductCard({ product, className, rank }: { product: Product; cl
   return (
     <article
       className={cx(
-        'group relative flex w-[172px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-white shadow-card',
+        'group relative flex w-[172px] shrink-0 snap-start flex-col overflow-hidden rounded-3xl bg-white shadow-card transition-shadow hover:shadow-float md:w-auto',
         className,
       )}
     >
-      <button onClick={() => openProduct(product.id)} className="relative block h-[150px] bg-gradient-to-b from-sand/70 to-white text-start">
+      <button
+        onClick={() => openProduct(product.id)}
+        className="relative block h-[150px] bg-gradient-to-b md:h-[180px] from-sand/70 to-white text-start"
+      >
         <ProductImage src={product.image} alt={product.name} tint={product.tint} className="absolute inset-2 group-active:scale-95" />
         {badge && <Badge kind={badge} className="absolute top-2.5 right-2.5" />}
-        {rank && (
-          <span className="absolute bottom-1 left-3 font-display text-4xl font-extrabold text-ink/10">{rank}</span>
-        )}
+        {rank && <span className="absolute bottom-1 left-3 font-display text-4xl font-extrabold text-ink/10">{rank}</span>}
         {product.model && (
           <span
             role="button"

@@ -14,9 +14,7 @@ export function ProductImage({ src, alt, tint, className, glow = true, eager }: 
   return (
     // callers may position it absolutely; only fall back to `relative` otherwise
     <div className={cx(!/\b(absolute|fixed)\b/.test(className ?? '') && 'relative', className)}>
-      {glow && (
-        <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgb(232_163_61/0.28)_0%,transparent_70%)]" />
-      )}
+      {glow && <div className="absolute inset-[12%] rounded-full bg-[radial-gradient(circle,rgb(232_163_61/0.28)_0%,transparent_70%)]" />}
       <img
         src={src}
         alt={alt}

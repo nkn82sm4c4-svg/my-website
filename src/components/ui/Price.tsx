@@ -1,7 +1,17 @@
 import { RESTAURANT } from '../../config/restaurant'
 import { cx } from '../../lib/format'
 
-export function Price({ value, original, size = 'md', className }: { value: number; original?: number; size?: 'sm' | 'md' | 'lg'; className?: string }) {
+export function Price({
+  value,
+  original,
+  size = 'md',
+  className,
+}: {
+  value: number
+  original?: number
+  size?: 'sm' | 'md' | 'lg'
+  className?: string
+}) {
   const s = { sm: 'text-sm', md: 'text-base', lg: 'text-2xl' }[size]
   return (
     <span className={cx('inline-flex items-baseline gap-1.5 font-display font-bold tabular-nums', s, className)}>

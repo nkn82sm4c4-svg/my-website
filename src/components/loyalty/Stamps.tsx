@@ -21,10 +21,18 @@ export function Stamps({ stamps, goal, size = 'md' }: { stamps: number; goal: nu
                   : 'border-dashed border-cream/30 text-cream/40',
               )}
             >
-              {last ? <Gift className={size === 'sm' ? 'size-4' : 'size-5'} /> : filled ? <Check className="size-5" strokeWidth={3} /> : <span className="text-xs font-bold">{i + 1}</span>}
+              {last ? (
+                <Gift className={size === 'sm' ? 'size-4' : 'size-5'} />
+              ) : filled ? (
+                <Check className="size-5" strokeWidth={3} />
+              ) : (
+                <span className="text-xs font-bold">{i + 1}</span>
+              )}
             </span>
             {i < goal - 1 && (
-              <span className={cx('h-0.5 flex-1 rounded-full transition-colors duration-500', i < stamps - 1 ? 'bg-gold' : 'bg-cream/15')} />
+              <span
+                className={cx('h-0.5 flex-1 rounded-full transition-colors duration-500', i < stamps - 1 ? 'bg-gold' : 'bg-cream/15')}
+              />
             )}
           </div>
         )

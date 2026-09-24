@@ -13,14 +13,18 @@ const META: Record<BadgeKind, { label: string; cls: string }> = {
 export function Badge({ kind, className }: { kind: BadgeKind; className?: string }) {
   const m = META[kind]
   return (
-    <span className={cx('inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold leading-5 whitespace-nowrap', m.cls, className)}>
+    <span
+      className={cx(
+        'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold leading-5 whitespace-nowrap',
+        m.cls,
+        className,
+      )}
+    >
       {m.label}
     </span>
   )
 }
 
 export function Pill({ children, className }: { children: React.ReactNode; className?: string }) {
-  return (
-    <span className={cx('inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold', className)}>{children}</span>
-  )
+  return <span className={cx('inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-xs font-semibold', className)}>{children}</span>
 }

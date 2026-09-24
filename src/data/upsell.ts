@@ -20,9 +20,7 @@ export function getUpsells(productId: string, excludeIds: string[] = [], limit =
   if (!source) return []
   const exclude = new Set([productId, ...excludeIds])
 
-  const paired = (source.pairsWith ?? [])
-    .map((id) => productById(id))
-    .filter((p): p is Product => !!p && !exclude.has(p.id))
+  const paired = (source.pairsWith ?? []).map((id) => productById(id)).filter((p): p is Product => !!p && !exclude.has(p.id))
 
   const reasons: Record<string, string> = {
     fries: 'يكمّل وجبتك',
@@ -32,7 +30,7 @@ export function getUpsells(productId: string, excludeIds: string[] = [], limit =
 
   const list: UpsellSuggestion[] = paired.map((p) => ({
     product: p,
-    reason: p.id.startsWith('sauce') ? 'يُطلب مع 8 من كل 10 طلبات' : reasons[p.categoryId] ?? 'الأكثر طلبًا معه',
+    reason: p.id.startsWith('sauce') ? 'يُطلب مع 8 من كل 10 طلبات' : (reasons[p.categoryId] ?? 'الأكثر طلبًا معه'),
   }))
 
   // Fill with popular sides if the product has few pairings.

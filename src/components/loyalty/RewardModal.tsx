@@ -39,9 +39,7 @@ function RewardDialog() {
             <div className="mx-auto mt-2 inline-flex items-center gap-2 rounded-2xl bg-gold-soft px-4 py-2 text-sm font-bold text-amber-900">
               <Gift className="size-4" /> {RESTAURANT.loyalty.rewardTitle}
             </div>
-            <p className="mt-3 text-xs text-muted">
-              أكملت {state.goal} طلبات — شكرًا لأنك من عائلة سنمار
-            </p>
+            <p className="mt-3 text-xs text-muted">أكملت {state.goal} طلبات — شكرًا لأنك من عائلة سنمار</p>
             <Button
               variant="primary"
               size="lg"

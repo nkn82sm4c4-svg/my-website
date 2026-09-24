@@ -11,13 +11,15 @@ interface Props {
   className?: string
   /** Hide default close button (e.g. when content provides its own). */
   bare?: boolean
+  /** Width of the centred modal on larger screens. */
+  size?: 'md' | 'lg'
 }
 
 /**
- * Mobile bottom sheet: slides up, drag-down or backdrop tap to dismiss,
- * locks body scroll, closes on Escape.
+ * Bottom sheet on phones (slide up, drag down to dismiss) and a centred modal
+ * on tablets / desktops. Locks body scroll, closes on Escape or backdrop click.
  */
-export function Sheet({ open, onClose, children, title, className, bare }: Props) {
+export function Sheet({ open, onClose, children, title, className, bare, size = 'md' }: Props) {
   const [drag, setDrag] = useState(0)
   const start = useRef<number | null>(null)
   const panel = useRef<HTMLDivElement>(null)
@@ -52,18 +54,19 @@ export function Sheet({ open, onClose, children, title, className, bare }: Props
   }
 
   return createPortal(
-    <div className="fixed inset-0 z-50 flex items-end justify-center" role="dialog" aria-modal="true">
+    <div className="fixed inset-0 z-50 flex items-end justify-center md:items-center md:p-6" role="dialog" aria-modal="true">
       <div className="absolute inset-0 animate-fade bg-ink/55 backdrop-blur-[2px]" onClick={onClose} />
       <div
         ref={panel}
         style={{ transform: drag ? `translateY(${drag}px)` : undefined, transition: drag ? 'none' : undefined }}
         className={cx(
-          'relative z-10 max-h-[92dvh] w-full max-w-[480px] animate-sheet-up overflow-y-auto overscroll-contain rounded-t-[28px] bg-cream no-scrollbar',
+          'relative z-10 max-h-[92dvh] w-full animate-sheet-up overflow-y-auto overscroll-contain rounded-t-[28px] bg-cream no-scrollbar md:max-h-[88dvh] md:animate-pop md:rounded-[28px] md:shadow-float',
+          size === 'lg' ? 'md:max-w-5xl' : 'md:max-w-lg',
           className,
         )}
       >
         <div
-          className="sticky top-0 z-20 flex justify-center pt-2.5 pb-1"
+          className="sticky top-0 z-20 flex justify-center pt-2.5 pb-1 md:hidden"
           onTouchStart={onTouchStart}
           onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
@@ -71,7 +74,7 @@ export function Sheet({ open, onClose, children, title, className, bare }: Props
           <span className="h-1.5 w-11 rounded-full bg-ink/15" />
         </div>
         {!bare && (
-          <div className="flex items-center justify-between px-5 pb-2">
+          <div className="flex items-center justify-between px-5 pb-2 md:px-6 md:pt-6">
             <div className="font-display text-lg font-bold">{title}</div>
             <button onClick={onClose} aria-label="إغلاق" className="tap grid size-9 place-items-center rounded-full bg-sand">
               <X className="size-4" />

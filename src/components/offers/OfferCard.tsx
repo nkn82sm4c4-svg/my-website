@@ -35,7 +35,7 @@ export function OfferCard({ offer, variant = 'full' }: Props) {
       className={cx(
         'relative isolate flex shrink-0 snap-center flex-col overflow-hidden rounded-[28px] bg-gradient-to-br p-5 shadow-float',
         ACCENTS[offer.accent],
-        variant === 'carousel' ? 'w-[86%] max-w-[340px]' : 'w-full',
+        variant === 'carousel' ? 'w-[86%] max-w-[340px] md:w-auto md:max-w-none' : 'w-full',
         offer.membersOnly && 'ring-2 ring-gold ring-offset-2 ring-offset-cream',
       )}
     >
@@ -54,17 +54,14 @@ export function OfferCard({ offer, variant = 'full' }: Props) {
         {offer.model && (
           <button
             onClick={() => openProduct(offerProductFor(offer), '3d')}
-            className={cx(
-              'tap flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-bold',
-              dark ? 'bg-white/15' : 'bg-ink/10',
-            )}
+            className={cx('tap flex items-center gap-1 rounded-full px-2 py-1 text-[11px] font-bold', dark ? 'bg-white/15' : 'bg-ink/10')}
           >
             <Box className="size-3.5" /> 3D
           </button>
         )}
       </div>
 
-      <div className="relative -mx-2 mt-1 h-40">
+      <div className="relative -mx-2 mt-1 h-40 md:h-52">
         <ProductImage src={offer.image} alt={offer.title} glow={false} className="absolute inset-0" />
       </div>
 

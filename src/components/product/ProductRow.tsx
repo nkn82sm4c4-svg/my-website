@@ -36,7 +36,9 @@ export function ProductRow({ product }: { product: Product }) {
       </button>
       <div className="flex min-w-0 flex-1 flex-col">
         <div className="flex flex-wrap gap-1">
-          {product.badges?.slice(0, 2).map((b) => <Badge key={b} kind={b} />)}
+          {product.badges?.slice(0, 2).map((b) => (
+            <Badge key={b} kind={b} />
+          ))}
         </div>
         <button onClick={() => openProduct(product.id)} className="mt-1 text-start">
           <h3 className="text-[15px] leading-snug font-bold">{product.name}</h3>
@@ -58,7 +60,10 @@ export function ProductRow({ product }: { product: Product }) {
           >
             <Plus className="size-4" /> أضف
             {qty > 0 && (
-              <span key={qty} className="absolute -top-2 -left-2 grid size-5 animate-pop place-items-center rounded-full bg-gold text-[11px] font-bold text-ink">
+              <span
+                key={qty}
+                className="absolute -top-2 -left-2 grid size-5 animate-pop place-items-center rounded-full bg-gold text-[11px] font-bold text-ink"
+              >
                 {qty}
               </span>
             )}

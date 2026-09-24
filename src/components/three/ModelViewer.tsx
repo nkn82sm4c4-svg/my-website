@@ -163,7 +163,10 @@ export function ModelViewer({ model, className, compact, autoRotate = true, tint
       {!loaded && !failed && (
         <div className="pointer-events-none absolute inset-x-10 bottom-5 flex flex-col items-center gap-2">
           <div className="h-1.5 w-full max-w-48 overflow-hidden rounded-full bg-ink/10">
-            <div className="h-full rounded-full bg-brand transition-[width] duration-300" style={{ width: `${Math.max(8, progress * 100)}%` }} />
+            <div
+              className="h-full rounded-full bg-brand transition-[width] duration-300"
+              style={{ width: `${Math.max(8, progress * 100)}%` }}
+            />
           </div>
           <span className="text-[11px] font-medium text-muted">جاري تحميل تجربة 3D…</span>
         </div>
@@ -177,7 +180,7 @@ export function ModelViewer({ model, className, compact, autoRotate = true, tint
 
       {/* gesture hint */}
       {loaded && !interacted && (
-        <div className={cx('pointer-events-none absolute inset-x-0 flex justify-center', compact ? 'bottom-2' : 'top-14')}>
+        <div className={cx('pointer-events-none absolute inset-x-0 flex justify-center', compact ? 'top-12' : 'top-14')}>
           <span className="flex animate-fade-up items-center gap-1.5 rounded-full bg-ink/80 px-3 py-1.5 text-[11px] font-medium text-cream backdrop-blur">
             <Hand className="size-3.5" /> اسحب للتدوير • قرّب بإصبعين
           </span>

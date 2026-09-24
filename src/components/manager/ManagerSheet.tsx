@@ -47,7 +47,11 @@ export function ManagerSheet() {
 
         <ul className="space-y-2.5">
           {VALUE_PILLARS.map((p, i) => (
-            <li key={p.title} className="flex animate-fade-up gap-3 rounded-2xl bg-white p-3.5 shadow-card" style={{ animationDelay: `${i * 60}ms` }}>
+            <li
+              key={p.title}
+              className="flex animate-fade-up gap-3 rounded-2xl bg-white p-3.5 shadow-card"
+              style={{ animationDelay: `${i * 60}ms` }}
+            >
               <span className="grid size-11 shrink-0 place-items-center rounded-xl bg-sand text-2xl">{p.emoji}</span>
               <span>
                 <span className="block font-display font-bold">{p.title}</span>
@@ -62,11 +66,7 @@ export function ManagerSheet() {
           <div className="grid grid-cols-2 gap-2.5">
             <Stat label="طلبات مؤكدة" value={String(stats.orders)} />
             <Stat label="متوسط قيمة الطلب" value={formatPrice(Math.round(stats.aov))} />
-            <Stat
-              label="أثر الاقتراحات على المتوسط"
-              value={stats.uplift ? `+${Math.round(stats.uplift)}%` : '—'}
-              highlight
-            />
+            <Stat label="أثر الاقتراحات على المتوسط" value={stats.uplift ? `+${Math.round(stats.uplift)}%` : '—'} highlight />
             <Stat label="قبول الاقتراحات" value={`${stats.acceptance}%`} />
             <Stat label="إيراد من الاقتراحات" value={formatPrice(stats.upsellRevenue)} />
             <Stat label="مشاهدات 3D" value={String(stats.views3d)} />

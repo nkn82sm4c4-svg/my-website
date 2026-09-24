@@ -35,17 +35,7 @@ export interface AddOn {
 }
 
 /** Key of a 3D model in `src/config/models.ts` (maps to /public/models/*.glb). */
-export type ModelKey =
-  | 'burger'
-  | 'double-burger'
-  | 'fries'
-  | 'drink'
-  | 'sauce'
-  | 'wrap'
-  | 'sub'
-  | 'pizza'
-  | 'fatayer'
-  | 'pie-boat'
+export type ModelKey = 'burger' | 'double-burger' | 'fries' | 'drink' | 'sauce' | 'wrap' | 'sub' | 'pizza' | 'fatayer' | 'pie-boat'
 
 export interface Product {
   id: string

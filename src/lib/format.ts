@@ -1,8 +1,7 @@
 import { RESTAURANT } from '../config/restaurant'
 import type { CartLine } from '../types'
 
-export const formatPrice = (n: number) =>
-  `${Number.isInteger(n) ? n : n.toFixed(2)} ${RESTAURANT.currency}`
+export const formatPrice = (n: number) => `${Number.isInteger(n) ? n : n.toFixed(2)} ${RESTAURANT.currency}`
 
 export const lineUnitPrice = (l: CartLine) => l.unitPrice + l.addOns.reduce((s, a) => s + a.price, 0)
 

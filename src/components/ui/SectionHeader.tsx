@@ -10,9 +10,9 @@ interface Props {
 
 export function SectionHeader({ emoji, title, subtitle, action }: Props) {
   return (
-    <div className="mb-3 flex items-end justify-between gap-3 px-5">
+    <div className="mb-3 flex items-end justify-between gap-3 px-5 md:mb-6 md:px-0">
       <div>
-        <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight">
+        <h2 className="flex items-center gap-2 text-xl font-bold tracking-tight md:text-3xl">
           {emoji && <span className="text-[1.1em]">{emoji}</span>}
           {title}
         </h2>

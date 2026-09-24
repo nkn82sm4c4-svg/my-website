@@ -15,7 +15,17 @@ test.beforeEach(async ({ page }) => {
   await page.goto('/')
 })
 
+test('website opens on the home page (not an app splash)', async ({ page }) => {
+  await expect(page.getByRole('heading', { name: 'سِنمار', level: 1 })).toBeVisible()
+  await expect(page.locator('footer')).toContainText('نموذج تجريبي')
+  // mobile menu
+  await page.getByRole('button', { name: 'القائمة' }).click()
+  await page.getByRole('navigation', { name: 'قائمة الجوال' }).getByRole('button', { name: 'العروض' }).click()
+  await expect(page.getByRole('heading', { name: '🔥 عروض سنمار' })).toBeVisible()
+})
+
 test('QR scan → home', async ({ page }) => {
+  await page.goto('/#/scan')
   await expect(page.getByText('امسح QR للوصول إلى منيو سنمار')).toBeVisible()
   await shot(page, '01-scan')
   await page.getByRole('button', { name: 'محاكاة مسح QR' }).click()
@@ -56,7 +66,20 @@ test('menu → add → upsell → cart edit → confirm → +1 loyalty point', a
   await page.goto('/#/menu')
   await expect(page.getByRole('heading', { name: 'المنيو' })).toBeVisible()
   // all requested categories exist
-  for (const c of ['الأكثر مبيعًا', 'ضاربات', 'صواريخ', 'دبلها ما تملها', 'مشاركة', 'منصفات', 'شاورما', 'بيتزا', 'سنمارية فطيرة', 'فطائر يومية', 'بطاطس', 'مشروبات']) {
+  for (const c of [
+    'الأكثر مبيعًا',
+    'ضاربات',
+    'صواريخ',
+    'دبلها ما تملها',
+    'مشاركة',
+    'منصفات',
+    'شاورما',
+    'بيتزا',
+    'سنمارية فطيرة',
+    'فطائر يومية',
+    'بطاطس',
+    'مشروبات',
+  ]) {
     await expect(page.locator(`[data-cat]`, { hasText: c })).toHaveCount(1)
   }
   await page.locator('[data-cat]', { hasText: 'ضاربات' }).click()
@@ -94,6 +117,7 @@ test('menu → add → upsell → cart edit → confirm → +1 loyalty point', a
   await expect(sauceLine).toHaveCount(0)
   await expect(burgerLine).toBeVisible()
   await expect(page.getByText('+1 نقطة ولاء')).toBeVisible()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(page.viewportSize()!.width)
   await shot(page, '07-cart')
 
   await page.getByRole('button', { name: /تأكيد الطلب/ }).click()
@@ -153,4 +177,32 @@ test('manager view explains value + live stats', async ({ page }) => {
   await expect(dialog.getByText('أرقام هذه التجربة')).toBeVisible()
   await page.waitForTimeout(500)
   await shot(page, '11-manager')
+})
+
+test.describe('desktop website', () => {
+  test.use({ viewport: { width: 1440, height: 900 }, isMobile: false, hasTouch: false })
+
+  test('top navigation, sidebar categories and centred product modal', async ({ page }) => {
+    const nav = page.getByRole('navigation', { name: 'التنقل الرئيسي' })
+    await expect(nav).toBeVisible()
+    await nav.getByRole('button', { name: 'المنيو' }).click()
+    await expect(page.getByRole('heading', { name: 'المنيو', level: 1 })).toBeVisible()
+    const sidebar = page.getByRole('navigation', { name: 'التصنيفات' })
+    await expect(sidebar).toBeVisible()
+    await sidebar.getByRole('button', { name: /بيتزا/ }).click()
+    await expect(page.locator('#cat-pizza')).toBeInViewport()
+    await page.locator('#cat-pizza article').first().getByRole('button').first().click()
+    const dialog = page.getByRole('dialog')
+    await expect(dialog.getByRole('heading', { name: 'بيتزا ببروني' })).toBeVisible()
+    const panel = dialog.getByRole('heading', { name: 'بيتزا ببروني' }).locator('xpath=ancestor::div[contains(@class,"max-w-5xl")]')
+    // wide centred modal, not a phone sheet (poll: the open animation scales it in)
+    await expect.poll(async () => (await panel.boundingBox())!.width).toBeGreaterThan(800)
+    await dialog.getByRole('button', { name: /أضف للسلة/ }).click()
+    await expect(page.getByRole('heading', { name: /أكمل وجبتك؟/ })).toBeVisible()
+    await page.getByRole('button', { name: 'متابعة' }).click()
+    await page.getByRole('button', { name: 'السلة' }).click()
+    await expect(page.getByRole('heading', { name: 'سلتك' })).toBeVisible()
+    await page.getByRole('button', { name: /تأكيد الطلب/ }).click()
+    await expect(page.getByText('🎉 تم تسجيل طلبك')).toBeVisible({ timeout: 5000 })
+  })
 })

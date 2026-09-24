@@ -73,6 +73,8 @@
   }
   body {
     @apply bg-cream text-ink font-sans antialiased;
+    /* safety net: never let a wide strip create sideways page scroll on phones */
+    overflow-x: clip;
     overscroll-behavior-y: none;
   }
   h1, h2, h3, h4 {

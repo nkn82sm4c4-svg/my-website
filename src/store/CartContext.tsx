@@ -25,8 +25,7 @@ interface CartApi {
 const CartContext = createContext<CartApi | null>(null)
 const KEY = 'cart'
 
-const sameAddOns = (a: AddOn[], b: AddOn[]) =>
-  a.length === b.length && a.every((x) => b.some((y) => y.id === x.id))
+const sameAddOns = (a: AddOn[], b: AddOn[]) => a.length === b.length && a.every((x) => b.some((y) => y.id === x.id))
 
 export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<CartLine[]>(() => storage.get<CartLine[]>(KEY, []))

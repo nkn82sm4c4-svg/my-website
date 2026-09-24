@@ -17,8 +17,7 @@ export const menuService = {
       .sort((a, b) => (b.popularity ?? 0) - (a.popularity ?? 0))
       .slice(0, limit),
   featured: () => PRODUCTS.filter((p) => p.featured),
-  byCategory: (id: CategoryId): Product[] =>
-    id === 'best' ? menuService.bestSellers(8) : PRODUCTS.filter((p) => p.categoryId === id),
+  byCategory: (id: CategoryId): Product[] => (id === 'best' ? menuService.bestSellers(8) : PRODUCTS.filter((p) => p.categoryId === id)),
   search: (q: string) => {
     const s = q.trim()
     if (!s) return []
