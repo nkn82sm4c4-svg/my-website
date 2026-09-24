@@ -22,8 +22,13 @@ function Site() {
 
   // Opened from a real table QR (?table=7): welcome the guest once per visit.
   useEffect(() => {
-    const first = !sessionStorage.getItem('sinmar.visited')
-    sessionStorage.setItem('sinmar.visited', '1')
+    let first = true
+    try {
+      first = !sessionStorage.getItem('sinmar.visited')
+      sessionStorage.setItem('sinmar.visited', '1')
+    } catch {
+      /* storage blocked — treat as first visit */
+    }
     if (table && first) toast(`مرحبًا بك في سنمار 👋 طاولة ${table}`)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

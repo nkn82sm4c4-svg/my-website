@@ -6,6 +6,9 @@ import { cx } from '../../lib/format'
 /** URL encoded in the table QR: the live demo + table number deep link. */
 // eslint-disable-next-line react-refresh/only-export-components
 export function qrTarget(table: string = RESTAURANT.demo.defaultTable) {
+  // A deployed build can pin the public address the QR should open (e.g. the hosted demo link).
+  const publicUrl = import.meta.env.VITE_PUBLIC_URL as string | undefined
+  if (publicUrl) return publicUrl
   const { origin, pathname } = window.location
   return `${origin}${pathname}?table=${table}#/`
 }
