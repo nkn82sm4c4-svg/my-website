@@ -126,6 +126,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
 
   // ── Cloud: members joining / leaving from their own devices ────────────────
   const removedRemote = useRef(new Set<string>())
+  /** Members who joined from their own phones (their presence comes from the cloud) */
+  const remoteIds = useRef(new Set<string>())
   const watchCode = session && (session.status === 'lobby' || session.status === 'running' || session.status === 'paused') ? session.code : null
   useEffect(() => {
     if (cloud !== 'online' || !watchCode) return
@@ -137,6 +139,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         if (!s) return
         const now = Date.now()
         for (const m of members) {
+          remoteIds.current.add(m.uid)
           if (removedRemote.current.has(m.uid)) continue
           const p = s.participants.find((x) => x.id === m.uid)
           if (s.status === 'lobby') {
@@ -180,7 +183,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const onVis = () => {
       const s = sessionRef.current
       if (!s || (s.status !== 'running' && s.status !== 'paused')) return
-      const host = s.participants[0]
+      // This device speaks for the first member who did not join from a phone
+      const host = s.participants.find((p) => !remoteIds.current.has(p.id))
       if (!host) return
       if (document.hidden) {
         if (host.status === 'connected') {
