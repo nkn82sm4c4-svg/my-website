@@ -11,6 +11,7 @@
     "test:e2e": "playwright test"
   },
   "dependencies": {
+    "firebase": "^12.19.0",
     "lucide-react": "^1.48.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
@@ -24,6 +25,7 @@
     "@types/react-dom": "^19.2.7",
     "@types/three": "^0.183.0",
     "@vitejs/plugin-react": "^6.1.1",
+    "firebase-tools": "^15.32.1",
     "oxlint": "^1.81.0",
     "tailwindcss": "^4.3.3",
     "typescript": "~6.0.2",

@@ -7,14 +7,14 @@ import { DEMO_SECONDS, GAME } from '../config/game'
 import { AVATARS } from '../data/members'
 import { cardById } from '../data/cards'
 import { canStart, presentCount } from '../game/engine'
-import { navigate } from '../hooks/useHashRoute'
+import { joinLink, navigate } from '../hooks/useHashRoute'
 import { minutesLabel, num } from '../lib/format'
 import { useGame } from '../store/GameContext'
 import { useToast } from '../store/ToastContext'
 import { EmptySession } from './EmptySession'
 
 export function LobbyPage() {
-  const { session, command, profile } = useGame()
+  const { session, command, profile, cloud } = useGame()
   const { toast } = useToast()
   const [name, setName] = useState('')
   const [avatar, setAvatar] = useState(AVATARS[0])
@@ -33,8 +33,8 @@ export function LobbyPage() {
 
   const copy = async () => {
     try {
-      await navigator.clipboard.writeText(session.code)
-      toast('تم نسخ رمز الجلسة', 'success', '📋')
+      await navigator.clipboard.writeText(cloud === 'online' ? joinLink(session.code) : session.code)
+      toast(cloud === 'online' ? 'تم نسخ رابط الانضمام' : 'تم نسخ رمز الجلسة', 'success', '📋')
     } catch {
       toast(`رمز الجلسة: ${session.code}`, 'info')
     }
@@ -43,7 +43,7 @@ export function LobbyPage() {
     const text = `انضموا إلى جلسة "شجرة البيت" لأسرة ${session.familyName} 🌱 — رمز الجلسة: ${session.code}`
     if (navigator.share) {
       try {
-        await navigator.share({ title: 'شجرة البيت', text })
+        await navigator.share({ title: 'شجرة البيت', text, url: joinLink(session.code) })
       } catch {
         /* cancelled */
       }
@@ -87,6 +87,9 @@ export function LobbyPage() {
               {session.code}
             </p>
             <p className="relative mt-3 text-[15px] font-medium text-ink-soft">شارك الرمز مع أفراد أسرتك</p>
+            <p className={`relative mt-2 text-[13px] font-semibold ${cloud === 'online' ? 'text-leaf' : 'text-muted'}`} data-testid="cloud-status">
+              {cloud === 'online' ? '● ينضمون من جوالاتهم: الرئيسية ← «انضم من جوالك»' : cloud === 'connecting' ? 'جارٍ الاتصال…' : 'بدون إنترنت: الانضمام من هذا الجهاز فقط'}
+            </p>
             <div className="relative mt-5 flex justify-center gap-2">
               <Button variant="secondary" onClick={copy} icon={<Copy size={17} />}>
                 نسخ

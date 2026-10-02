@@ -73,6 +73,9 @@ export function HomePage() {
               طريقة اللعب
             </Button>
           </div>
+          <button onClick={() => navigate('join')} className="text-center text-[15px] font-semibold text-forest underline-offset-4 hover:underline">
+            عندك رمز جلسة؟ انضم من جوالك ←
+          </button>
           <DemoSwitch variant="card" />
         </div>
       </section>

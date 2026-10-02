@@ -36,14 +36,16 @@ export function SetupPage() {
   const openRewards = profile.rewards.filter((r) => !r.claimedAt)
   const [rewardId, setRewardId] = useState(() => (openRewards.some((r) => r.id === profile.goalRewardId) ? profile.goalRewardId : (openRewards[0]?.id ?? '')))
   const [touched, setTouched] = useState(false)
+  const [busy, setBusy] = useState(false)
   const active = session && (session.status === 'running' || session.status === 'paused')
   const nameOk = familyName.trim().length >= 2
 
-  const submit = () => {
+  const submit = async () => {
     setTouched(true)
-    if (!nameOk) return
+    if (!nameOk || busy) return
+    setBusy(true)
     if (active) command({ type: 'cancel' })
-    createSession({ familyName, durationMin: duration, expected, cardId, rewardId, code })
+    await createSession({ familyName, durationMin: duration, expected, cardId, rewardId, code })
     navigate('lobby')
   }
 
@@ -163,7 +165,7 @@ export function SetupPage() {
       </div>
 
       <div className="sticky bottom-3 z-10 mt-6">
-        <Button size="xl" block onClick={submit} icon={<ArrowLeft size={22} />} className="flex-row-reverse" data-testid="create-session">
+        <Button size="xl" block onClick={submit} disabled={busy} icon={<ArrowLeft size={22} />} className="flex-row-reverse" data-testid="create-session">
           ابدؤوا جلستكم الأسرية
         </Button>
       </div>

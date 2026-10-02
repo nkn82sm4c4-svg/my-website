@@ -21,6 +21,8 @@ export type SessionAction =
   | { type: 'joinAll'; now: number }
   | { type: 'addMember'; name: string; avatar: string; now: number }
   | { type: 'removeMember'; memberId: string; now: number }
+  /** A member joined from their own device (takes a waiting slot if one is free) */
+  | { type: 'remoteJoin'; memberId: string; name: string; avatar: string; now: number }
   | { type: 'start'; now: number }
   | { type: 'tick'; now: number }
   | { type: 'pause'; now: number }
@@ -70,12 +72,12 @@ export const presentCount = (s: LiveSession) => s.participants.filter((p) => p.s
 export const canStart = (s: LiveSession) => s.status === 'lobby' && presentCount(s) >= GAME.minParticipants
 export const progressOf = (s: LiveSession) => Math.min(1, s.growthMs / s.targetMs)
 export const remainingMs = (s: LiveSession) => Math.max(0, s.targetMs - s.growthMs)
-export const penaltyLeft = (s: LiveSession, now: number) => (s.penaltyUntil && s.penaltyUntil > now ? s.penaltyUntil - now : 0)
+export const penaltyLeft = (s: Pick<LiveSession, 'penaltyUntil'>, now: number) => (s.penaltyUntil && s.penaltyUntil > now ? s.penaltyUntil - now : 0)
 
 export type BlockReason = 'paused' | 'penalty' | 'away' | null
 
 /** Why the tree is not growing right now (null = it is growing) */
-export function blockReason(s: LiveSession, now: number): BlockReason {
+export function blockReason(s: Pick<LiveSession, 'status' | 'penaltyUntil' | 'participants'>, now: number): BlockReason {
   if (s.status === 'paused') return 'paused'
   if (penaltyLeft(s, now) > 0) return 'penalty'
   if (s.participants.some((p) => p.status === 'away')) return 'away'
@@ -129,6 +131,16 @@ export function sessionReducer(s: LiveSession | null, a: SessionAction): LiveSes
       if (!name) return s
       const m: Participant = { id: uid('m'), name, avatar: a.avatar, status: 'connected', departures: 0 }
       return { ...s, participants: [...s.participants, m], events: [...s.events, { at: a.now, type: 'join', memberId: m.id }] }
+    }
+    case 'remoteJoin': {
+      if (s.status !== 'lobby') return s
+      const m = { id: a.memberId, name: a.name.trim() || 'فرد', avatar: a.avatar, status: 'connected' as const, departures: 0 }
+      const ev = [...s.events, { at: a.now, type: 'join' as const, memberId: a.memberId }]
+      if (s.participants.some((p) => p.id === a.memberId)) return { ...setMember(s, a.memberId, (p) => ({ ...p, ...m, departures: p.departures })), events: ev }
+      const slot = s.participants.findIndex((p) => p.status === 'waiting')
+      if (slot >= 0) return { ...s, participants: s.participants.map((p, i) => (i === slot ? m : p)), events: ev }
+      if (s.participants.length >= GAME.maxParticipants) return s
+      return { ...s, participants: [...s.participants, m], events: ev }
     }
     case 'removeMember':
       if (s.status !== 'lobby') return s

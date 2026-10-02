@@ -1,6 +1,8 @@
 import { createContext, useCallback, useContext, useEffect, useLayoutEffect, useMemo, useReducer, useRef, useState, type ReactNode } from 'react'
 import { randomCard } from '../data/cards'
+import { joinCode } from '../lib/random'
 import { sessionReducer, type SessionAction } from '../game/engine'
+import * as cloudApi from '../services/cloud'
 import * as family from '../services/familyService'
 import { load, remove, save } from '../services/storage'
 import type { DurationMin, FamilyProfile, LiveSession, Reward, SessionResult, Settings } from '../types'
@@ -14,9 +16,11 @@ interface GameApi {
   settings: Settings
   session: LiveSession | null
   lastResult: SessionResult | null
+  /** online = other devices can join with the code */
+  cloud: CloudState
   setDemoMode: (on: boolean) => void
   setDetectLeaving: (on: boolean) => void
-  createSession: (o: { familyName: string; durationMin: DurationMin; expected: number; cardId: string; rewardId: string; code?: string }) => void
+  createSession: (o: { familyName: string; durationMin: DurationMin; expected: number; cardId: string; rewardId: string; code?: string }) => Promise<void>
   command: (c: SessionCommand) => void
   newCard: () => void
   discardSession: () => void
@@ -28,6 +32,7 @@ interface GameApi {
   resetEmpty: () => void
 }
 
+export type CloudState = 'connecting' | 'online' | 'offline'
 const Ctx = createContext<GameApi | null>(null)
 const RESULT_KEY = 'last-result'
 
@@ -75,6 +80,86 @@ export function GameProvider({ children }: { children: ReactNode }) {
       lastSave.current = { at: now, key }
     }
   }, [session])
+
+  // ── Cloud: sign in, sync the family profile ────────────────────────────────
+  const [cloud, setCloud] = useState<CloudState>('connecting')
+  useEffect(() => {
+    let alive = true
+    cloudApi.connect().then(async (uid) => {
+      if (!alive) return
+      if (!uid) return setCloud('offline')
+      try {
+        const remote = await cloudApi.loadProfile()
+        if (!alive) return
+        if (remote) {
+          family.saveProfile(remote)
+          setProfile(remote)
+        } else await cloudApi.saveProfile(profileRef.current)
+        setCloud('online')
+      } catch (e) {
+        console.warn('cloud sync failed', e)
+        setCloud('offline')
+      }
+    })
+    return () => {
+      alive = false
+    }
+  }, [])
+
+  useEffect(() => {
+    if (cloud !== 'online') return
+    const t = setTimeout(() => cloudApi.saveProfile(profile).catch(() => {}), 800)
+    return () => clearTimeout(t)
+  }, [profile, cloud])
+
+  // ── Cloud: publish the session so member devices can follow it ────────────
+  const lastPublish = useRef({ at: 0, key: '' })
+  useEffect(() => {
+    if (cloud !== 'online' || !session) return
+    const key = `${session.id}|${session.status}|${session.participants.map((p) => p.id + p.status).join()}|${session.cardId}|${session.penaltyUntil}`
+    const now = Date.now()
+    if (key !== lastPublish.current.key || now - lastPublish.current.at > 1000) {
+      lastPublish.current = { at: now, key }
+      cloudApi.publishSession(session).catch(() => {})
+    }
+  }, [session, cloud])
+
+  // ── Cloud: members joining / leaving from their own devices ────────────────
+  const removedRemote = useRef(new Set<string>())
+  const watchCode = session && (session.status === 'lobby' || session.status === 'running' || session.status === 'paused') ? session.code : null
+  useEffect(() => {
+    if (cloud !== 'online' || !watchCode) return
+    let unsub: (() => void) | null = null
+    let alive = true
+    cloudApi
+      .watchMembers(watchCode, (members) => {
+        const s = sessionRef.current
+        if (!s) return
+        const now = Date.now()
+        for (const m of members) {
+          if (removedRemote.current.has(m.uid)) continue
+          const p = s.participants.find((x) => x.id === m.uid)
+          if (s.status === 'lobby') {
+            if (!p || p.status !== 'connected' || p.name !== m.name) {
+              dispatch({ type: 'remoteJoin', memberId: m.uid, name: m.name, avatar: m.avatar, now })
+              if (!p) toast(`انضم ${m.name} من جهازه`, 'success', m.avatar)
+            }
+          } else if (p) {
+            if (m.status === 'away' && p.status === 'connected') dispatch({ type: 'leave', memberId: m.uid, now })
+            if (m.status === 'connected' && p.status === 'away') {
+              dispatch({ type: 'return', memberId: m.uid, now })
+              toast(`عاد ${p.name} إلى الجلسة 🌿`, 'success')
+            }
+          }
+        }
+      })
+      .then((u) => (alive ? (unsub = u) : u()))
+      .catch(() => {})
+    return () => {
+      alive = false
+      unsub?.()
+    }
+  }, [cloud, watchCode, toast])
 
   // ── Completion: award points, plant the tree, store the result (once) ──────
   const recorded = useRef<string | null>(null)
@@ -128,15 +213,36 @@ export function GameProvider({ children }: { children: ReactNode }) {
       settings,
       session,
       lastResult,
+      cloud,
       setDemoMode: (on) => updateSettings({ demoMode: on }),
       setDetectLeaving: (on) => updateSettings({ detectLeaving: on }),
-      createSession: (o) => dispatch({ type: 'create', ...o, demo: settings.demoMode, now: Date.now() }),
-      command: (c) => dispatch({ ...c, now: Date.now() } as SessionAction),
+      createSession: async (o) => {
+        let code = o.code ?? joinCode()
+        if (cloud === 'online') {
+          // Avoid colliding with another family's active session
+          for (let i = 0; i < 6; i++) {
+            const free = await cloudApi.codeIsFree(code).catch(() => true)
+            if (free) break
+            code = joinCode()
+          }
+        }
+        removedRemote.current.clear()
+        dispatch({ type: 'create', ...o, code, demo: settings.demoMode, now: Date.now() })
+      },
+      command: (c) => {
+        if (c.type === 'removeMember') removedRemote.current.add(c.memberId)
+        dispatch({ ...c, now: Date.now() } as SessionAction)
+      },
       newCard: () => {
         const s = sessionRef.current
         if (s) dispatch({ type: 'card', cardId: randomCard([...s.cardsUsed, s.cardId]).id, now: Date.now() })
       },
       discardSession: () => {
+        const s = sessionRef.current
+        // Tell member devices the session ended before forgetting it locally
+        if (cloud === 'online' && s && s.status !== 'completed' && s.status !== 'cancelled') {
+          cloudApi.publishSession({ ...s, status: 'cancelled', tickAt: null, endedAt: Date.now() }).catch(() => {})
+        }
         dispatch({ type: 'restore', session: null })
         family.saveLiveSession(null)
       },
@@ -155,7 +261,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         remove(RESULT_KEY)
       },
     }),
-    [profile, settings, session, lastResult, updateSettings, withProfile],
+    [profile, settings, session, lastResult, cloud, updateSettings, withProfile, toast],
   )
 
   return <Ctx.Provider value={api}>{children}</Ctx.Provider>

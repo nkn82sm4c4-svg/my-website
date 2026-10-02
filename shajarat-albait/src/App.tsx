@@ -7,6 +7,7 @@ import { useHashRoute, type RouteName } from './hooks/useHashRoute'
 import { GardenPage } from './pages/GardenPage'
 import { HomePage } from './pages/HomePage'
 import { HowPage } from './pages/HowPage'
+import { JoinPage } from './pages/JoinPage'
 import { LivePage } from './pages/LivePage'
 import { LobbyPage } from './pages/LobbyPage'
 import { ResultPage } from './pages/ResultPage'
@@ -24,6 +25,7 @@ const PAGES: Record<RouteName, () => React.ReactElement> = {
   garden: GardenPage,
   rewards: RewardsPage,
   how: HowPage,
+  join: JoinPage,
 }
 
 export default function App() {
