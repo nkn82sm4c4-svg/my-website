@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { GameId, OwnerFeedbackState, FeedbackStatus } from './types';
 import { GAMES_CATALOG } from './data/games';
 import { GameCard } from './components/GameCard';
-import { GameFeedbackBar } from './components/GameFeedbackBar';
 import { OwnerDecisionModal } from './components/OwnerDecisionModal';
 
 // Game components
@@ -196,18 +195,6 @@ export default function App() {
               )}
             </div>
 
-            {/* Bottom Feedback Bar for Restaurant Owner */}
-            {activeGame && (
-              <div className="max-w-xl mx-auto w-full">
-                <GameFeedbackBar
-                  gameTitle={activeGame.title}
-                  businessBenefit={activeGame.businessBenefit}
-                  status={feedback[activeGame.id] || null}
-                  onFeedback={(status) => handleFeedback(activeGame.id, status)}
-                  onBackToGrid={() => setActiveGameId(null)}
-                />
-              </div>
-            )}
           </div>
         )}
       </main>
