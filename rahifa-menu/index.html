@@ -435,7 +435,7 @@
   </section>
 </main>
 
-<footer>© مطعم رهيفة — بريدة · الأسعار المذكورة حسب المتوفر، وبقية الأسعار عند الطلب</footer>
+<footer>© مطعم رهيفة — بريدة · الأسعار بالريال السعودي</footer>
 
 <div class="fab">
   <div class="fab-inner">
@@ -503,34 +503,35 @@
   // ── Restaurant data (edit here) ─────────────────────────────
   const PHONE_INTL = '966552570077';
 
+  // Prices marked // placeholder are sample prices — replace with the real ones
   const MENU = [
     { id: 'shawarma', title: 'الشاورما', emoji: '🌯', items: [
-      { name: 'شاورما صاروخ', emoji: '🚀', desc: 'وجبة كبيرة تشبع', popular: true },
+      { name: 'شاورما صاروخ', emoji: '🚀', desc: 'وجبة كبيرة تشبع', popular: true, prices: [{ v: 16 }] }, // placeholder
       { name: 'شاورما عربي', emoji: '🍽️', desc: 'صحن عربي دبل', prices: [{ v: 18 }] },
-      { name: 'شاورما الأولين', emoji: '🌯', desc: 'كلاسيكية' },
-      { name: 'فطيرة شاورما عربي فرن', emoji: '🥙', desc: 'فطيرة شاورما عربي من الفرن' },
+      { name: 'شاورما الأولين', emoji: '🌯', desc: 'كلاسيكية', prices: [{ v: 8 }] }, // placeholder
+      { name: 'فطيرة شاورما عربي فرن', emoji: '🥙', desc: 'فطيرة شاورما عربي من الفرن', prices: [{ v: 12 }] }, // placeholder
     ]},
     { id: 'tortilla', title: 'التورتيلا والراب', emoji: '🌮', items: [
-      { name: 'تورتيلا', emoji: '🌮', desc: 'سبايسي أو عادي', popular: true, options: ['سبايسي', 'عادي'] },
-      { name: 'زنجر تورتيلا', emoji: '🌶️', desc: 'تورتيلا بالزنجر' },
+      { name: 'تورتيلا', emoji: '🌮', desc: 'سبايسي أو عادي', popular: true, options: ['سبايسي', 'عادي'], prices: [{ v: 12 }] }, // placeholder
+      { name: 'زنجر تورتيلا', emoji: '🌶️', desc: 'تورتيلا بالزنجر', prices: [{ v: 14 }] }, // placeholder
       { name: 'وجبة دبوشة', emoji: '🥖', desc: 'خبز تويستر محشي شاورما وستربس وبطاطس وصوصات', prices: [{ l: 'سنقل', v: 20 }, { l: 'دبل', v: 30 }] },
     ]},
     { id: 'pizza', title: 'البيتزا', emoji: '🍕', items: [
-      { name: 'بيتزا تندوري', emoji: '🍕', desc: 'بيتزا بنكهة التندوري', popular: true },
-      { name: 'بيتزا مربعات', emoji: '🟧', desc: 'بيتزا مقطعة مربعات' },
-      { name: 'بيتزا رهيفة', emoji: '🧀', desc: 'بالجبن' },
+      { name: 'بيتزا تندوري', emoji: '🍕', desc: 'بيتزا بنكهة التندوري', popular: true, prices: [{ v: 25 }] }, // placeholder
+      { name: 'بيتزا مربعات', emoji: '🟧', desc: 'بيتزا مقطعة مربعات', prices: [{ v: 22 }] }, // placeholder
+      { name: 'بيتزا رهيفة', emoji: '🧀', desc: 'بالجبن', prices: [{ v: 20 }] }, // placeholder
     ]},
     { id: 'chicken', title: 'الدجاج والبوكسات', emoji: '🍗', items: [
-      { name: 'بوكس زنجر', emoji: '🍗', desc: '10 قطع أو 12 قطعة', options: ['10 قطع', '12 قطعة'] },
+      { name: 'بوكس زنجر', emoji: '🍗', desc: '10 قطع أو 12 قطعة', prices: [{ l: '10 قطع', v: 35 }, { l: '12 قطعة', v: 42 }] }, // placeholder
       { name: 'تشكن تندر', emoji: '🍤', desc: 'يقدم مع تورتيلا وبطاطس وصوص ومشروب', prices: [{ v: 20 }] },
-      { name: 'بوكس برجر', emoji: '🍔', desc: 'بوكس برجر' },
+      { name: 'بوكس برجر', emoji: '🍔', desc: 'بوكس برجر', prices: [{ v: 28 }] }, // placeholder
     ]},
     { id: 'fajita', title: 'الفاهيتا', emoji: '🫑', items: [
-      { name: 'فاهيتا دجاج', emoji: '🫑', desc: 'فاهيتا بالدجاج' },
+      { name: 'فاهيتا دجاج', emoji: '🫑', desc: 'فاهيتا بالدجاج', prices: [{ v: 18 }] }, // placeholder
     ]},
     { id: 'extras', title: 'الإضافات', emoji: '🍟', items: [
-      { name: 'بطاطس مبهرة', emoji: '🍟', desc: 'بطاطس بالبهارات' },
-      { name: 'صوصات متنوعة', emoji: '🥫', desc: 'تشكيلة صوصات' },
+      { name: 'بطاطس مبهرة', emoji: '🍟', desc: 'بطاطس بالبهارات', prices: [{ v: 7 }] }, // placeholder
+      { name: 'صوصات متنوعة', emoji: '🥫', desc: 'تشكيلة صوصات', prices: [{ v: 2 }] }, // placeholder
     ]},
   ];
 
