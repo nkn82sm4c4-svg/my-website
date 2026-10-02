@@ -1,0 +1,8 @@
+{
+  "name": "ألعاب المطاعم التفاعلية",
+  "description": "منصة عرض تفاعلية لأفكار ألعاب الولاء وزيادة التفاعل (Gamification) لرواد وأصحاب المطاعم.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
