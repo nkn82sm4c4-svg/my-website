@@ -63,10 +63,6 @@ export const GameCard: React.FC<GameCardProps> = ({
           </div>
 
           <div className="flex flex-col items-end gap-1.5">
-            <span className="text-[11px] font-bold px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-300 border border-amber-500/30">
-              {game.badge}
-            </span>
-
             {/* Owner Feedback Tag if decided */}
             {feedbackStatus === 'liked' && (
               <span className="inline-flex items-center gap-1 text-[10px] font-black text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded-full border border-amber-400/40">
