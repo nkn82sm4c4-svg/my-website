@@ -249,11 +249,6 @@ export const ScratchCardGame: React.FC<ScratchCardGameProps> = ({ onBackToGrid }
             <div className="text-xs text-neutral-400 mb-2">
               {currentPrize.valueText}
             </div>
-            {currentPrize.code && (
-              <div className="px-3 py-1 bg-[#1A1D26] border border-dashed border-amber-500/40 rounded-lg text-amber-300 font-mono text-xs font-bold">
-                كود: {currentPrize.code}
-              </div>
-            )}
           </div>
 
           {/* TOP LAYER: Canvas Scratch Surface */}

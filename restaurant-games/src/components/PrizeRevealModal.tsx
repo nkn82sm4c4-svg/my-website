@@ -1,6 +1,6 @@
 import React from 'react';
 import { Prize } from '../types';
-import { Sparkles, RotateCcw, ArrowRight, Tag } from 'lucide-react';
+import { Sparkles, RotateCcw, ArrowRight } from 'lucide-react';
 import { sounds } from '../utils/sound';
 
 interface PrizeRevealModalProps {
@@ -53,21 +53,7 @@ export const PrizeRevealModal: React.FC<PrizeRevealModalProps> = ({
           {prize.valueText}
         </p>
 
-        {/* Mock Coupon Code Box */}
-        {!isLoss && prize.code && (
-          <div className="bg-[#1A1D26] border border-dashed border-amber-500/40 rounded-2xl p-4 mb-6 text-center shadow-xs">
-            <div className="flex items-center justify-center gap-1.5 text-xs text-amber-300 font-bold mb-1">
-              <Tag className="w-3.5 h-3.5 text-amber-400" />
-              <span>كود الخصم التجريبي للزبون:</span>
-            </div>
-            <div className="text-xl font-mono font-black text-amber-400 tracking-wider">
-              {prize.code}
-            </div>
-            <span className="text-[10px] text-neutral-400 mt-1 block">
-              (يتم إدخاله عند الطلب عبر الموقع أو إظهاره للكاشير)
-            </span>
-          </div>
-        )}
+        <div className="mb-6" />
 
         {/* Actions */}
         <div className="flex flex-col sm:flex-row gap-2.5 justify-center">
