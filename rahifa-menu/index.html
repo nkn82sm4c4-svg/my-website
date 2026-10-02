@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 <meta name="theme-color" content="#0a0907" />
-<meta name="description" content="منيو مطعم رهيفة — شاورما وفاهيتا وبيتزا في بريدة. سفري وتوصيل." />
+<meta name="description" content="منيو مطعم رهيفة — شاورما وفاهيتا وبيتزا في بريدة. توصيل." />
 <title>مطعم رهيفة | المنيو</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -252,6 +252,7 @@
   .cart-total { display: flex; justify-content: space-between; align-items: baseline; margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--line); font-size: 17px; }
   .cart-total b { font-size: 24px; color: var(--gold); font-variant-numeric: tabular-nums; }
   .cart-note { margin: 4px 0 0; color: var(--muted); font-size: 13px; }
+  .delivery-only { margin: 16px 0 0; padding: 12px 14px; border-radius: 14px; border: 1px solid var(--gold); background: #2a2216; color: var(--gold); font-weight: 800; }
   .otype { border: 0; padding: 0; margin: 16px 0 0; display: grid; gap: 8px; }
   .otype legend { font-weight: 800; margin-bottom: 8px; }
   .otype label { display: block; }
@@ -428,7 +429,6 @@
       </div>
     </div>
     <div class="services">
-      <span class="svc">🚗 سفري — استلام من السيارة</span>
       <span class="svc">🛵 توصيل</span>
       <span class="svc">💰 20–40 ر.س للفرد</span>
     </div>
@@ -480,13 +480,9 @@
     </div>
     <p class="cart-note" id="cart-note" hidden>بعض الأصناف سعرها يتحدد عند الطلب، وبيأكده لك المطعم في واتساب.</p>
 
-    <fieldset class="otype">
-      <legend>نوع الطلب</legend>
-      <label><input type="radio" name="otype" value="سفري — استلام من السيارة" checked /><span>🚗 سفري — استلام من السيارة</span></label>
-      <label><input type="radio" name="otype" value="توصيل" /><span>🛵 توصيل</span></label>
-    </fieldset>
+    <p class="delivery-only">🛵 الطلب توصيل</p>
     <label class="field" for="c-name">الاسم (اختياري)<input id="c-name" autocomplete="name" maxlength="40" /></label>
-    <label class="field" id="addr-wrap" for="c-addr" hidden>عنوان التوصيل<textarea id="c-addr" rows="2" maxlength="200" placeholder="الحي، الشارع، أقرب معلم"></textarea></label>
+    <label class="field" id="addr-wrap" for="c-addr">عنوان التوصيل<textarea id="c-addr" rows="2" maxlength="200" placeholder="الحي، الشارع، أقرب معلم"></textarea></label>
     <label class="field" for="c-notes">ملاحظات (اختياري)<textarea id="c-notes" rows="2" maxlength="200" placeholder="مثال: بدون مخلل، صوص زيادة"></textarea></label>
 
     <a class="btn btn-wa send" id="cart-send" href="#" target="_blank" rel="noopener">
@@ -699,15 +695,10 @@
     lastFocus?.focus?.({ preventScroll: true });
   }
 
-  // Delivery address only when "توصيل" is chosen
-  const addrWrap = document.getElementById('addr-wrap');
-  document.querySelectorAll('input[name="otype"]').forEach((r) => r.addEventListener('change', () => {
-    addrWrap.hidden = document.querySelector('input[name="otype"]:checked').value !== 'توصيل';
-  }));
 
   function orderMessage() {
     const t = totals();
-    const type = document.querySelector('input[name="otype"]:checked').value;
+    const type = 'توصيل';
     const name = document.getElementById('c-name').value.trim();
     const addr = document.getElementById('c-addr').value.trim();
     const notes = document.getElementById('c-notes').value.trim();
@@ -757,9 +748,8 @@
 
   document.getElementById('cart-send').addEventListener('click', (e) => {
     if (!cart.length) return e.preventDefault();
-    const type = document.querySelector('input[name="otype"]:checked').value;
     const addr = document.getElementById('c-addr');
-    if (type === 'توصيل' && !addr.value.trim()) {
+    if (!addr.value.trim()) {
       e.preventDefault();
       addr.focus();
       addr.classList.add('invalid');
